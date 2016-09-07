@@ -47,14 +47,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private Set<BluetoothDevice> pairedDevices;
     private boolean isBtConnected = false;
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
+    private int pinState;
+    private int stateDuration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        bytesToSend = new byte[]{(byte)0xff, (byte)0xfe, (byte)0, (byte)0};
+        bytesToSend = new byte[]{(byte)0xff, (byte)0xfe, (byte)0, (byte)1};
 
         btn1 = (Button)findViewById(R.id.button1);
         btn1.setOnTouchListener(this);
@@ -142,14 +143,14 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             case R.id.button1: {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        bytesToSend[2] = (byte)1;   /* Pin 0 */
-                        bytesToSend[3] = (byte)5;   /* 0.5 seconds */
+                        pinState = 1;   /* Pin 0 */
+                        stateDuration = 1;   /* 0.1 seconds */
                         sendBtMsg();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-                        sendBtMsg();
+//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
+//                        sendBtMsg();
                         break;
                     }
                     default:
@@ -162,13 +163,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
                         bytesToSend[2] = (byte)2;   /* Pin 1 */
-                        bytesToSend[3] = (byte)5;   /* 0.5 seconds */
+                        bytesToSend[3] = (byte)1;   /* 0.1 seconds */
                         sendBtMsg();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-                        sendBtMsg();
+//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
+//                        sendBtMsg();
                         break;
                     }
                     default:
@@ -181,13 +182,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
                         bytesToSend[2] = (byte)4;   /* Pin 2 */
-                        bytesToSend[3] = (byte)5;   /* 0.5 seconds */
+                        bytesToSend[3] = (byte)1;   /* 0.1 seconds */
                         sendBtMsg();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-                        sendBtMsg();
+//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
+//                        sendBtMsg();
                         break;
                     }
                     default:
@@ -200,13 +201,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
                         bytesToSend[2] = (byte)8;   /* Pin 3 */
-                        bytesToSend[3] = (byte)5;   /* 0.5 seconds */
+                        bytesToSend[3] = (byte)1;   /* 0.1 seconds */
                         sendBtMsg();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-                        sendBtMsg();
+//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
+//                        sendBtMsg();
                         break;
                     }
                     default:
@@ -219,13 +220,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
                         bytesToSend[2] = (byte)16;   /* Pin 4 */
-                        bytesToSend[3] = (byte)5;   /* 0.5 seconds */
+                        bytesToSend[3] = (byte)1;   /* 0.1 seconds */
                         sendBtMsg();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-                        sendBtMsg();
+//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
+//                        sendBtMsg();
                         break;
                     }
                     default:
@@ -238,13 +239,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
                         bytesToSend[2] = (byte)32;   /* Pin 5 */
-                        bytesToSend[3] = (byte)5;   /* 0.5 seconds */
+                        bytesToSend[3] = (byte)1;   /* 0.1 seconds */
                         sendBtMsg();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-                        sendBtMsg();
+//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
+//                        sendBtMsg();
                         break;
                     }
                     default:
@@ -257,13 +258,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
                         bytesToSend[2] = (byte)64;   /* Pin 6 */
-                        bytesToSend[3] = (byte)5;   /* 0.5 seconds */
+                        bytesToSend[3] = (byte)1;   /* 0.1 seconds */
                         sendBtMsg();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-                        sendBtMsg();
+//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
+//                        sendBtMsg();
                         break;
                     }
                     default:
@@ -396,7 +397,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         {
             try
             {
+
                 btSocket.getOutputStream().write(bytesToSend);
+
+//                /* Reading */
+//                byte[] buffer = new byte[10];
+//                int bytes =  btSocket.getInputStream().read(buffer);
+//                String readMessage = new String(buffer, 0, bytes);
+//                msg("Received: " + String.valueOf(buffer[0]) );
+
             }
             catch (IOException e)
             {
