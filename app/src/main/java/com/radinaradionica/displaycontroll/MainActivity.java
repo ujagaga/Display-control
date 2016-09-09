@@ -401,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private void scheduleStateChangeUpdate(){
         if (delayedCommandHandler == null) {
             delayedCommandHandler = new Handler();
-            delayedCommandHandler.postDelayed(updateCurrentState, 50);
+            delayedCommandHandler.postDelayed(updateCurrentState, 20);
         }
     }
 
@@ -457,15 +457,14 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             } else {
                 devicePinOutput &= ~64;
             }
+
     
-            /* stop what ever is currently done */
-            sendBtMsg(":ff00\n");
-    
-            /* send current state and small duration.
+            /* send in one sweep STOP_ALL message, current state and small duration.
              * NOTE: after the duration is expired, the HW will retain the last state.
-             * If you wish to set output to 0, you must send state 0 which will be applied here after all the buttons have been released
+             * If you wish to set output to 0, you must send either STOP_ALL message (:FF00)
+             * or state 0 which will be applied here after all the buttons have been released
              * */
-            sendBtMsg(":" + String.format("%02X", (devicePinOutput & 0xFF)) + "01\n");
+            sendBtMsg(":FE00:" + String.format("%02X", (devicePinOutput & 0xFF)) + "01");
         }
     };
 
