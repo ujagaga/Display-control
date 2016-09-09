@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -14,7 +15,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +26,18 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener{
 
+    private class pinState{
+        public Boolean pin1 = false;
+        public Boolean pin2 = false;
+        public Boolean pin3 = false;
+        public Boolean pin4 = false;
+        public Boolean pin5 = false;
+        public Boolean pin6 = false;
+        public Boolean pin7 = false;
+    }
+
+    private pinState PinState;
+
     private Button btn1;
     private Button btn2;
     private Button btn3;
@@ -35,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private Button btn7;
     private Button btn_rescan;
 
-    private byte[] bytesToSend;
 
     private ListView device_list;
     String address = null;
@@ -47,15 +58,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private Set<BluetoothDevice> pairedDevices;
     private boolean isBtConnected = false;
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    private int pinState;
-    private int stateDuration;
+    private Handler delayedCommandHandler;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        bytesToSend = new byte[]{(byte)0xff, (byte)0xfe, (byte)0, (byte)1};
+        PinState = new pinState();
 
         btn1 = (Button)findViewById(R.id.button1);
         btn1.setOnTouchListener(this);
@@ -143,14 +154,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             case R.id.button1: {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        pinState = 1;   /* Pin 0 */
-                        stateDuration = 1;   /* 0.1 seconds */
-                        sendBtMsg();
+                        PinState.pin1 = true;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-//                        sendBtMsg();
+                        PinState.pin1 = false;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     default:
@@ -162,14 +172,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             case R.id.button2: {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        bytesToSend[2] = (byte)2;   /* Pin 1 */
-                        bytesToSend[3] = (byte)1;   /* 0.1 seconds */
-                        sendBtMsg();
+                        PinState.pin2 = true;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-//                        sendBtMsg();
+                        PinState.pin2 = false;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     default:
@@ -181,14 +190,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             case R.id.button3: {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        bytesToSend[2] = (byte)4;   /* Pin 2 */
-                        bytesToSend[3] = (byte)1;   /* 0.1 seconds */
-                        sendBtMsg();
+                        PinState.pin3 = true;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-//                        sendBtMsg();
+                        PinState.pin3 = false;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     default:
@@ -200,14 +208,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             case R.id.button4: {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        bytesToSend[2] = (byte)8;   /* Pin 3 */
-                        bytesToSend[3] = (byte)1;   /* 0.1 seconds */
-                        sendBtMsg();
+                        PinState.pin4 = true;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-//                        sendBtMsg();
+                        PinState.pin4 = false;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     default:
@@ -219,14 +226,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             case R.id.button5: {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        bytesToSend[2] = (byte)16;   /* Pin 4 */
-                        bytesToSend[3] = (byte)1;   /* 0.1 seconds */
-                        sendBtMsg();
+                        PinState.pin5 = true;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-//                        sendBtMsg();
+                        PinState.pin5 = false;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     default:
@@ -238,14 +244,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             case R.id.button6: {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        bytesToSend[2] = (byte)32;   /* Pin 5 */
-                        bytesToSend[3] = (byte)1;   /* 0.1 seconds */
-                        sendBtMsg();
+                        PinState.pin6 = true;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-//                        sendBtMsg();
+                        PinState.pin6 = false;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     default:
@@ -257,14 +262,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             case R.id.button7: {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        bytesToSend[2] = (byte)64;   /* Pin 6 */
-                        bytesToSend[3] = (byte)1;   /* 0.1 seconds */
-                        sendBtMsg();
+                        PinState.pin7 = true;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-//                        bytesToSend[2] = (byte)0xfe;   /* Stop the last action */
-//                        sendBtMsg();
+                        PinState.pin7 = false;
+                        scheduleStateChangeUpdate();
                         break;
                     }
                     default:
@@ -272,7 +276,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 }
                 break;
             }
-
 
         }
 
@@ -347,8 +350,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             {
                 if ((btSocket == null) || !isBtConnected)
                 {
-                    BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);//connects to the device's address and checks if it's available
-                    btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
+                    BluetoothDevice DeviceCommunicator = myBluetooth.getRemoteDevice(address); //connects to the device's address and checks if it's available
+                    btSocket = DeviceCommunicator.createInsecureRfcommSocketToServiceRecord(myUUID); //create a RFCOMM (SPP) connection
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
                     btSocket.connect();//start connection
                 }
@@ -392,26 +395,90 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     }
 
-    private void sendBtMsg(){
-        if (btSocket!=null)
-        {
-            try
-            {
+    /* This is so you have time to press multiple buttons virtually simultaneously
+    * and still send only one message
+    * */
+    private void scheduleStateChangeUpdate(){
+        if (delayedCommandHandler == null) {
+            delayedCommandHandler = new Handler();
+            delayedCommandHandler.postDelayed(updateCurrentState, 50);
+        }
+    }
 
-                btSocket.getOutputStream().write(bytesToSend);
-
-//                /* Reading */
-//                byte[] buffer = new byte[10];
-//                int bytes =  btSocket.getInputStream().read(buffer);
-//                String readMessage = new String(buffer, 0, bytes);
-//                msg("Received: " + String.valueOf(buffer[0]) );
-
+    Runnable updateCurrentState = new Runnable() {
+        @Override public void run() {
+            
+            if (delayedCommandHandler != null) {
+                delayedCommandHandler.removeCallbacks(updateCurrentState);
+                delayedCommandHandler = null;
             }
-            catch (IOException e)
-            {
-                msg("Error: " + e.toString());
+
+            int devicePinOutput = 0;
+
+            if (PinState.pin1) {
+                devicePinOutput |= 1;
+            } else {
+                devicePinOutput &= ~1;
+            }
+
+            if (PinState.pin2) {
+                devicePinOutput |= 2;
+            } else {
+                devicePinOutput &= ~2;
+            }
+
+            if (PinState.pin3) {
+                devicePinOutput |= 4;
+            } else {
+                devicePinOutput &= ~4;
+            }
+
+            if (PinState.pin4) {
+                devicePinOutput |= 8;
+            } else {
+                devicePinOutput &= ~8;
+            }
+
+            if (PinState.pin5) {
+                devicePinOutput |= 16;
+            } else {
+                devicePinOutput &= ~16;
+            }
+
+
+            if (PinState.pin6) {
+                devicePinOutput |= 32;
+            } else {
+                devicePinOutput &= ~32;
+            }
+
+            if (PinState.pin7) {
+                devicePinOutput |= 64;
+            } else {
+                devicePinOutput &= ~64;
+            }
+    
+            /* stop what ever is currently done */
+            sendBtMsg(":ff00\n");
+    
+            /* send current state and small duration.
+             * NOTE: after the duration is expired, the HW will retain the last state.
+             * If you wish to set output to 0, you must send state 0 which will be applied here after all the buttons have been released
+             * */
+            sendBtMsg(":" + String.format("%02X", (devicePinOutput & 0xFF)) + "01\n");
+        }
+    };
+
+    private void sendBtMsg(String msgToDevice){
+        if (btSocket!=null){
+            try{
+                btSocket.getOutputStream().write(msgToDevice.getBytes());
+            }
+            catch (IOException e){
+                msg("Error: No communication to device");
             }
         }
     }
+
 
 }
